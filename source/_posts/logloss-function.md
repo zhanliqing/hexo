@@ -58,3 +58,31 @@ $$
 $$
 即概率分布函数可以写成
 $$\mathbb{P}(y|z)  =\frac{1}{1+e^{-yz}} \tag{16}$$
+
+softmax对应的概率公式及求导
+-------------------------
+上边说的logloss是二分类的损失函数，也就是逻辑回归用的损失函数，而对于多分类的情形，需要用softmax，相应的概率密度函数也要做相应的修改，如下：
+假设分类为$m$类，对于每一类有一个$n$维的参数，即对于$Y=k$，它的参数为$w_{k1},w_{k2},\cdots,w_{kn}$，则定义它的概率密度函数为：
+
+$$\mathbb{P}(Y=j|x) = \frac{e^{W_jX}}{\sum_{i=1}^{m}e^{W_iX}}$$，其中$$W_jX=w_{j1}x_1+w_{j2}x_2+\cdots+w_{jn}x_n$$，
+对于softmax，通常用logloss损失函数，公式为
+$$L(y,y')=\sum_{1}^{m}{-y_{i}log(y’_{i})}$$
+y为$(m,1)$的列向量，假设一个样本为i类，则$y=[0,0,\cdots,1,\cdots,0]$,第$i$维为1
+
+下面讨论导数,假设样本为$i$类，则有对于$j=i$，求导得
+$$
+f'(W_jX)=-\frac{1}{f(W_iX)}\frac{\partial_{\mathbb{P}(Y=j|x)}}{\partial_{Wj}}
+=-\frac{1}{f(W_iX)}(\frac{e^{W_jX}*X}{\sum_{i=1}^{k}e^{W_{i}X}}-\frac{e^{W_jX}*e^{W_jX}*X}{\left (\sum_{i=1}^{k}e^{W_iX} \right)^2})
+=(f(W_jX-1)X
+$$
+而对于$j != i$的情况，
+$$
+f'(W_jX)=-\frac{1}{f(W_iX)}\frac{\partial_{\mathbb{P}(Y=i|x)}}{\partial_{Wj}}
+=-\frac{1}{f(W_iX)}(-\frac{e^{W_jX}*e^{W_iX}*X}{\left (\sum_{i=1}^{k}e^{W_iX} \right)^2})
+=f(W_jX)X
+$$
+我们注意到$y_i=1,y_j=0$,因此可以写成通用的格式，即
+$$
+f'(W_iX)=(f(W_iX)-y_i)X
+$$
+可以看到，跟二分类的逻辑回归是一致的。
